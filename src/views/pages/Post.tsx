@@ -1,45 +1,19 @@
-import React, { useEffect } from 'react';
-import {
-  selectedPost,
-  selectedPostStatus,
-} from 'application/posts/postsSelectors';
-import { useAppSelector, useAppDispatch } from 'application/hooks';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import PostLink from 'views/components/PostLink';
 import PostDate from 'views/components/PostDate';
-import { fetchPostById } from 'application/posts/postsSlice';
-import PostsStatus from 'shared/status';
+import { usePost } from 'application/react-query-hooks';
 import PostAuthor from '../components/PostAuthor';
 
 function Post() {
   const { postId } = useParams();
-  const post = useAppSelector(selectedPost);
-  const postStatus = useAppSelector(selectedPostStatus);
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    if (!post && postId) {
-      dispatch(fetchPostById(postId));
-    }
-  }, [dispatch, post, postId]);
+  const { data: post, isLoading, isError, isSuccess } = usePost(postId ?? '');
+  if (isLoading) <div>Loading...</div>;
 
-  if (postStatus === PostsStatus.loading) {
-    // TODO add loading spinner
-    return <div>Loading...</div>;
-  }
+  if (isError) <div>Error...</div>;
 
-  if (postStatus === PostsStatus.error) {
-    return <div>Error</div>;
-  }
+  if (!isSuccess) return null;
 
-  // TODO add Loading when I fetch the post
-
-  if (!post) {
-    return (
-      <section>
-        <h2>Post not found</h2>
-      </section>
-    );
-  }
   const { title, by, time, url } = post;
 
   return (
