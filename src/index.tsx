@@ -5,8 +5,11 @@ import { Provider } from 'react-redux';
 import { store } from 'application/store';
 import { fetchPostIds } from 'application/posts/postsSlice';
 import { BrowserRouter } from 'react-router-dom';
-import App from './App';
+
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import reportWebVitals from './reportWebVitals';
+import App from './App';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -14,11 +17,17 @@ const root = ReactDOM.createRoot(
 
 store.dispatch(fetchPostIds());
 
+// Create a client
+const queryClient = new QueryClient();
+
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
-        <App />
+        <QueryClientProvider client={queryClient}>
+          <App />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
       </Provider>
     </BrowserRouter>
   </React.StrictMode>,

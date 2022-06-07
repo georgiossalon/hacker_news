@@ -1,4 +1,5 @@
 import baseUrl from 'shared/constants';
+import { Post } from 'shared/models';
 
 const responseHandling = async (response: Response) => {
   if (response.ok) {
@@ -23,7 +24,7 @@ export default {
       return errorHandling(error);
     }
   },
-  getPostById: async (id: string) => {
+  getPostById: async (id: string): Promise<Post> => {
     try {
       const response = await fetch(`${baseUrl}/item/${id}.json`);
       return await responseHandling(response);
